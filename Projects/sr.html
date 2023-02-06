@@ -54,17 +54,205 @@
 							<h1>Stream Reasoning with Differential Dataflow</h1>
 							<!-- <span class="image main"><img src="images/pic13.jpg" alt="" /></span> -->
 							<h2> Goal </h2>
-							<p> The aim of the thesis is to provide a working system able to perform Stream Reasoning from a Graph Stream Processing point of view. To achieve this we use Timely Dataflow, a framework written in Rust that proved great results when dealing with Graph Processing applications. The system is a first step for a bigger research area </p>
-							<h3> What this project is </h3>
-							<p>Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fergiat. Pellentesque in mi eu massa lacinia malesuada et a elit. Donec urna ex, lacinia in purus ac, pretium pulvinar mauris. Curabitur sapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit tristique.</p>
+							<p><b>Premise</b>: the thesis document in the <a href="Projects/sr.html#references">References</a> sectin contains the meaning of the technical terms and formatlities used.</p>
+							<p> The aim of the work is to provide a system able to perform Stream Reasoning as a Graph Stream Processing use case. To achieve this I use Differential Dataflow, a framework written in Rust that proved great results when dealing with Graph Processing applications. The functionalities of the system are the following:
+							<ul>
+								<li>Encode RDF dataset representing the Knowledge Base in terms of Terminological and Assertion Box</li>
+								<li>Perform user defined reasoning procedure on the Knowledge Base to derive implicit information</li>
+								<li>Maintain the result of the reasoning procedure against updates (additions and deletions) in the Knowledge Base</li>
+							</ul>
+							To achieve the functionalities, we also set non-functional objectives to guide the design of the system:</p>
+							<ul>
+								<li>Clever design of the critical components that favors usability and at the same time taking advantage of Rust features that enhance perforomances</li>
+								<li>Analyze the Dataflow computing paradigm to perform user-defined reasoning procedures on RDF Datasets encoded knowledge bases</li>
+								<li>Provide insightful performance analysis and comparison with a system to collocate it in the field</li>
+							</ul>
+							<h2> Use Case </h2>
+							<p>
+							Although this work originates as a research work in the prolific research area of Stream Reasoning, it can still be useful in real world scenarios. As a significant example: the GDPR, the European suite of laws that regulates how organizations are allowed to collect, process and delete data, grants the client of the organization the <i>right to be forgotten</i>: the right to request the complete erasure of all the data pertaining him/her without undue delay. This problem can be considered as applying an update to the existing dataset of the organization. When the client requests his data to be deleted, the organization needs to apply a delete update on all the data that are related to the client. This is an important requirement as any information erroneously kept in the organization's record would be violating the right to be forgotten, with serious legal implications. For this reason, structuring the data so that inference procedures can detect all client’s data and then delete them accordingly would be a solution to this problem. This is what ultimately we aim at doing in this thesis work: given a dataset and an inference procedure, the goal is to produce all the records that can be deduced from the existing dataset, with the ability of incrementally deleting (or inserting) batches of records and all the ones deriving from them.</p>
 							<h2> Demo </h2>
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam tristique libero eu nibh porttitor fermentum. Nullam venenatis erat id vehicula viverra. Nunc ultrices eros ut ultricies condimentum. Mauris risus lacus, blandit sit amet venenatis non, bibendum vitae dolor. Nunc lorem mauris, fringilla in aliquam at, euismod in lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In non lorem sit amet elit placerat maximus. Pellentesque aliquam maximus risus, vel venenatis mauris vehicula hendrerit.</p>
-							<h2> References</h2>
+							<h4> Full Materialization </h4>
+							<p>Given the following RDF Dataset that represents the Terminological Box and Assertion Box of the knowledge base regarding Universities and their structures (IRIs hidden for sake of clarity):
+							<pre><code>TBOX:
+&lt;...#Employee&gt; &lt;...#type&gt; &lt;...#Class&gt; .
+&lt;...#Employee&gt; &lt;...#label&gt; &quot;Employee&quot; .
+&lt;...#Faculty&gt; &lt;...#type&gt; &lt;...#Class&gt; .
+&lt;...#Faculty&gt; &lt;...#label&gt; &quot;faculty member&quot; .
+&lt;...#Faculty&gt; &lt;...#subClassOf&gt; &lt;...#Employee&gt; .
+&lt;...#FullProfessor&gt; &lt;...#type&gt; &lt;...#Class&gt; .
+&lt;...#FullProfessor&gt; &lt;...#label&gt; &quot;full professor&quot; .
+&lt;...#FullProfessor&gt; &lt;...#subClassOf&gt; &lt;...#Professor&gt; .
+&lt;...#Professor&gt; &lt;...#type&gt; &lt;...#Class&gt; .
+&lt;...#Professor&gt; &lt;...#label&gt; &quot;professor&quot; .
+&lt;...#Professor&gt; &lt;...#subClassOf&gt; &lt;...#Faculty&gt; .
+&lt;...#headOf&gt; &lt;...#type&gt; &lt;...#ObjectProperty&gt; .
+&lt;...#headOf&gt; &lt;...#label&gt; &quot;is the head of&quot; .
+&lt;...#headOf&gt; &lt;...#subPropertyOf&gt; &lt;...#worksFor&gt; .
+&lt;...#memberOf&gt; &lt;...#type&gt; &lt;...#ObjectProperty&gt; .
+&lt;...#memberOf&gt; &lt;...#label&gt; &quot;member of&quot; .
+&lt;...#worksFor&gt; &lt;...#type&gt; &lt;...#ObjectProperty&gt; .
+&lt;...#worksFor&gt; &lt;...#label&gt; &quot;Works For&quot; .
+&lt;...#worksFor&gt; &lt;...#subPropertyOf&gt; &lt;...#memberOf&gt; .
+&lt;...#teacherOf&gt; &lt;...#type&gt; &lt;...#ObjectProperty&gt; .
+&lt;...#teacherOf&gt; &lt;...#label&gt; &quot;teaches&quot; .
+&lt;...#teacherOf&gt; &lt;...#domain&gt; &lt;...#Faculty&gt; .
+&lt;...#teacherOf&gt; &lt;...#range&gt; &lt;...#Course&gt; .</code></pre>
+							<pre><code>ABOX:
+&lt;.../FullProfessor7&gt; &lt;...#headOf&gt; &lt;http://www.Department0.University0.edu&gt; .
+&lt;.../FullProfessor7&gt; &lt;...#type&gt; &lt;...#FullProfessor&gt; .
+&lt;.../FullProfessor7&gt; &lt;...#teacherOf&gt; &lt;http://www.Department0.University0.edu/Course10&gt; .</code></pre>
+							For clarity we can represent the knowledge base as the following graphs:</p>
+							<div class="box alt">
+								<div class="row gtr-uniform">
+									<div class="col-8"><span class="image fit"><img src="images/tbox.png" alt="" /></span></div>
+									<div class="col-4"><span class="image fit"><img src="images/abox.png" alt="" /></span></div>
+								</div>
+							</div>
+							<p>It is interesting to notice that the knowledge base contains "hidden" information: for example, say that we want to query the knowledge base to extract a list of all the <i>Faculty Members</i>. The Assertion Box contains the relation: &lt"FullProfessor7" - <i>type</i> - FullProfessor&gt, but it does not contain any relation &lt"FullProfessor7" - <i>type</i> - Faculty&gt. Because of this, querying the knowledge base for Faculty Members will return an empty set. But we notice that the relation &lt"FullProfessor7" - <i>type</i> - Faculty&gt can be <b>inferred</b> from the knowledge base at the initial state: 
+								<ol>
+									<li>"FullProfessor7" is of type FullProfessor</li>
+									<li>FullProfessor is a subclass of Professor</li>
+									<li>Professor is a subclass of Faculty</li>
+								</ol>
+							<ul>
+								<li> 2 AND 3 imply that: &ltFullProfessor - sub class of - Faculty&gt
+								<li> 1 AND &ltFullProfessor - sub class of - Faculty&gt imply that: &ltFullProfessor - <i>type</i> - Faculty&gt
+							</ul>
+							Therefore developing the dataset (i.e, the knowledge base) according to simple logic rules allows us to extract from the knowledge base the information that would be missing otherwise. Every ontology language has a ruleset that represent the inference you can perform on the dataset. In the work we focus on ρDF, that allows the inference of information according to the following ruleset (represented using Datalog):
+							<pre>
+							<code>Ti(A, SPO, C) ← Ti(A, SPO, B),Ti(B, SPO, C); // SPO: SubPropertyOf
+Ti(A, P, B) ← Ti(Q, SPO, P),Ti(A, Q, B);
+Ti(A, TYPE, C) ← Ti(B, SCO, C),Ti(A, TYPE, B);
+Ti(A, SCO, C) ← Ti(A, SCO, B),Ti(B, SCO, C); // SCO: SubClassOf 
+Ti(A, TYPE, D) ← Ti(P, DOMAIN, D),Ti(A, P, B)
+Ti(A, TYPE, R) ← Ti(P, RANGE, R),Ti(B, P, A)</code></pre>
+							The dataset including all the inferred relations according to the ruleset is called Full Materialization. The derived information produced as output is (red arrows to represent the derived information):
+							<pre>
+								<code><...#headOf> <...#subPropertyOf> <...#memberOf> .
+<...#FullProfessor> <...#subClassOf> <...#Employee> .
+<...#Professor> <...#subClassOf> <...#Employee> .
+<.../FullProfessor7> <...#type> <...#Employee> .
+<.../FullProfessor7> <...#worksFor> &lt;http://www.Department0.University0.edu&gt; .
+<.../FullProfessor7> <...#type> <...#Professor> .
+<.../FullProfessor7> <...#memberOf> &lt;http://www.Department0.University0.edu&gt; .
+<...#FullProfessor> <...#subClassOf> <...#Faculty> .
+<.../FullProfessor7> <...#type> <...#Faculty> .
+<.../Course10> <...#type> <...#Course> .</code></pre>
+							<div class="box alt">
+								<div class="row gtr-uniform">
+									<div class="col-12"><span class="image fit"><img src="images/full_mat.png" alt="" /></span></div>
+								</div>
+							</div>
+							<h4>Updates</h4>
+							<p>One of the biggest challenges in Stream Reasoning is updating the result of the materialization against changes in the knowledge base (both TBox and ABox). The problem of maintaining the materialization against chagnes in the knowledge base is non-trivial. The main challenge is that it is very inefficient to recompute from scratch the materialization everytime the knowledge base changes (mostly impractical in the context of Streaming Data). In this work, I achieve this by using Differential Dataflow built-in capability of maintaining the the result of the Dataflow computation. In order to do this, the reasoning logic must be provided as a dataflow computation, which in itself is a very interesting problem.
+							</p>
+							<h6>ABox Addition</h6>
+							ABox additions:
+							<pre>
+								<code><.../FullProfessor8> <...#headOf> &lt;http://www.Department0.University1.edu&gt; .
+<.../FullProfessor8> <...#type> <...#FullProfessor> .
+<.../FullProfessor8> <...#teacherOf> <.../Course11> .</code></pre>
+<div class="box alt">
+								<div class="row gtr-uniform">
+									<div class="col-4"><span class="image fit"><img src="images/a_box_plus.png" alt="" /></span></div>
+								</div>
+							</div><p>The system will output the maintained result of the full materialization without having to compute from scratch the previous results:
+							<pre><code><.../FullProfessor8> <...#type> <...#Employee> .
+<.../FullProfessor8> <...#memberOf> &lt;http://www.Department0.University1.edu&gt; .
+<.../FullProfessor8> <...#teacherOf> <.../Course11> .
+<.../FullProfessor8> <...#type> <...#Faculty> .
+<.../Course11> <...#type> <...#Course> .
+<.../FullProfessor8> <...#type> <...#FullProfessor> .
+<.../FullProfessor8> <...#type> <...#Professor> .
+<.../FullProfessor8> <...#headOf> &lt;http://www.Department0.University1.edu&gt; .
+<.../FullProfessor8> <...#worksFor> &lt;http://www.Department0.University1.edu&gt; .</code></pre>
+							<div class="box alt">
+								<div class="row gtr-uniform">
+									<div class="col-8"><span class="image fit"><img src="images/a_box_plus_result.png" alt="" /></span></div>
+								</div>
+							</div></p>
+							<h6>ABox Deletion</h6>
+							ABox deletions:
+							<pre>
+								<code><.../FullProfessor7> <...#headOf> &lt;http://www.Department0.University0.edu&gt;  .
+<.../FullProfessor7> <...#type> <...#FullProfessor> .
+</code></pre>
+							<div class="box alt">
+								<div class="row gtr-uniform">
+									<div class="col-4"><span class="image fit"><img src="images/a_box_minus.png" alt="" /></span></div>
+								</div>
+							</div><p>The system will output the maintained result of the full materialization and removes the relations belonging to the deletion set and all the relations that derive from them. In particular the following triples WILL NOT be present in the output as they were correctly removed (dotted red lines in the graph):
+							<pre><code><.../FullProfessor7> <...#memberOf> &lt;http://www.Department0.University0.edu&gt; .
+<.../FullProfessor7> <...#type> <...#FullProfessor> .
+<.../FullProfessor7> <...#type> <...#Professor> .
+<.../FullProfessor7> <...#headOf> &lt;http://www.Department0.University0.edu&gt; .
+<.../FullProfessor7> <...#worksFor> &lt;http://www.Department0.University0.edu&gt; .</code></pre>
+<div class="box alt">
+								<div class="row gtr-uniform">
+									<div class="col-8"><span class="image fit"><img src="images/a_box_minus_result.png" alt="" /></span></div>
+								</div>
+							</div>
+							It is very interesting to notice that the system correctly removes the relation < FullProfessor7 -<i>type</i>- Professor >, but does NOT remove the relations < FullProfessor7 -<i>type</i>- Faculty > and < FullProfessor7 -<i>type</i>- Employee >. In fact the < FullProfessor7 -<i>type</i>- Professor > relation cannot be inferred in any other way but using the < FullProfessor7 -<i>type</i>- FullProfessor > relation that has been removed from the knowledge base. Conversely, the relation < FullProfessor7 -<i>type</i>- Faculty > remains in the updated materialization as it can be inferred through the domain rule (rule number 5) of the <i>teacherOf</i> property. This, in turn, allows the derivation of the relation < FullProfessor7 -<i>type</i>- Employee > that will be correctly present in the updated materialization.
+						</p>
+						<h6>TBox Addition</h6>
+						TBox additions:
+							<pre>
+								<code><...#headOf> <...#domain> <...#Person> .
+<...#headOf> <...#range> <...#Institution> .
+<...#Employee> <...#subClassOf> <...#Worker> .
+</code></pre>
+							<div class="box alt">
+								<div class="row gtr-uniform">
+									<div class="col-7"><span class="image fit"><img src="images/t_box_plus.png" alt="" /></span></div>
+								</div>
+							</div><p>Adding Terminologies triggers a whole new set of relations in the knowledge base. The system correctly maintains the result by adding all possible derivations according to the ruleset:
+							<pre><code>&lt;http://www.Department0.University0.edu&gt; <...#type> <...#Institution> .
+<...#Employee> <...#subClassOf> <...#Worker> .
+<...#headOf> <...#domain> <...#Person> .
+<...#FullProfessor> <...#subClassOf> <...#Worker> .
+<...#Professor> <...#subClassOf> <...#Worker> .
+<.../FullProfessor7> <...#type> <...#Person> .
+<.../FullProfessor7> <...#type> <...#Worker> .
+<...#Faculty> <...#subClassOf> <...#Worker> .
+<....#headOf> <.../rdf-schema#range> <...#Institution> .</code></pre>
+<div class="box alt">
+								<div class="row gtr-uniform">
+									<div class="col-12"><span class="image fit"><img src="images/t_box_plus_result.png" alt="" /></span></div>
+								</div>
+							</div>
+						</p>
+						<h6>TBox Deletion</h6>
+						TBox deletions:
+							<pre>
+								<code><...#Professor> <...#subClassOf> <...#Faculty> .
+<...#teacherOf> <...#domain> <...#Faculty> .</code></pre>
+							<div class="box alt">
+								<div class="row gtr-uniform">
+									<div class="col-4"><span class="image fit"><img src="images/t_box_minus.png" alt="" /></span></div>
+								</div>
+							</div><p>Deleting Terminologies correctly means that triples that can only be derived form the set of deletions must be in turn deleted. Therefore we obtain the following deletion set:
+							<pre><code><...#FullProfessor> <...#subClassOf> <...#Employee> .
+<...#Professor> <...#subClassOf> <...#Employee> .
+<...#Professor> <...#subClassOf> <...#Faculty> .
+<.../FullProfessor7> <...#type> <...#Employee> .
+<...#FullProfessor> <...#subClassOf> <...#Faculty> .
+<.../FullProfessor7> <...#type> <...#Faculty> .
+<...#teacherOf> <...#domain> <...#Faculty> .</code></pre>
+							<div class="box alt">
+								<div class="row gtr-uniform">
+									<div class="col-12"><span class="image fit"><img src="images/t_box_minus_result.png" alt="" /></span></div>
+								</div>
+							</div>
+						</p>
+						<p>Removing both the relations &lt;Professor -<i>subClassOf</i>- Faculty&gt; and &lt;teacherOf -<i>domain</i>- Faculty&gt;, there is no information that implies that &lt;FullProfessor7 -<i>type</i>- Faculty&gt;. With this out of the knowledge base, now there is no longer enough information to derive the relation < FullProfessor7 -<i>type</i>- Employee >. The system realizes it and removes those triples.
+							</p>
+							<h2 id="references"> References</h2>
 							<p><ul>
 								<li><a href="resources/masters_thesis.pdf">Thesis Document</a></li>
 								<li><a href="https://github.com/JimmyHypi/Stream-Reasoning-with-Differential-Dataflow">Github repo</a></li>
 							</ul></p>
-							<h2> Technical Notes </h2>
+							<p></p>
+							
 						</div>
 					</div>
 
