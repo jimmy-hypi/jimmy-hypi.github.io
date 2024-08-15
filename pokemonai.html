@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>2D Rendering Software - Jimmy Hypi Portfolio</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Cardo:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="assets/css/main.css" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: PhotoFolio
+  * Template URL: https://bootstrapmade.com/photofolio-bootstrap-photography-website-template/
+  * Updated: Aug 07 2024 with Bootstrap v5.3.3
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body class="gallery-single-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid position-relative d-flex align-items-center justify-content-between">
+
+      <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0 title-intro">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <h1 class="sitename">Jimmy Hypi - Portfolio</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="index.html">Home<br></a></li>
+          <!--<li><a href="about.html">About</a></li>-->
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+
+      <div class="header-social-links">
+        <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
+        <!--<a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+        <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+        <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>-->
+      </div>
+
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title" data-aos="fade">
+      <div class="heading">
+        <div class="container">
+          <div class="row d-flex justify-content-center text-center">
+            <div class="col-lg-8">
+              <h1>2D Rendering Software</h1>
+              <p class="mb-0">In this project I developed a 2D Rendering Software in Java and I used it to showcase an
+                application of the Markov Decision Process (an AI agent considers risk & reward and finds the best path
+                towards the reward) </p>
+              <a href="contact.html" class="cta-btn">Available for Hire<br></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <nav class="breadcrumbs">
+        <div class="container">
+          <ol>
+            <li><a href="index.html">Home</a></li>
+            <li class="current">2D Rendering Software</li>
+          </ol>
+        </div>
+      </nav>
+    </div><!-- End Page Title -->
+
+
+    <div class="heading disclaimer">
+      <div class="container">
+        <div class="row d-flex justify-content-center text-center">
+          <div class="col-lg-8">
+            <p class="mb-0">The artwork utilized in this project is for educational purposes only. This use is intended
+              to provide commentary,
+              criticism, or teaching, all of which are recognized as fair use under copyright law. The reproduction of
+              the artwork is
+              limited, and no commercial advantage is derived from its use. Moreover, the user can't even interact with
+              the application. This work is used to illustrate and
+              facilitate learning
+              and discussion within an educational framework, consistent with the principles of fair use as outlined in
+              17 U.S.C. §
+              107.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Gallery Details Section -->
+    <section id="gallery-details" class="gallery-details section">
+
+      <div class="container" data-aos="fade-up">
+
+        <div class="portfolio-details-slider swiper init-swiper">
+          <script type="application/json" class="swiper-config">
+            {
+              "loop": true,
+              "speed": 600,
+              "autoplay": {
+                "delay": 5000
+              },
+              "slidesPerView": "auto",
+              "navigation": {
+                "nextEl": ".swiper-button-next",
+                "prevEl": ".swiper-button-prev"
+              },
+              "pagination": {
+                "el": ".swiper-pagination",
+                "type": "bullets",
+                "clickable": true
+              }
+            }
+          </script>
+          <div class="swiper-wrapper align-items-center">
+
+            <div class="swiper-slide">
+              <img src="assets/img/gallery/ai1.png" alt="">
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/img/gallery/ai2.png" alt="">
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/img/gallery/ai3.png" alt="">
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/img/gallery/ai4.png" alt="">
+            </div>
+
+            <!--
+            <div class="swiper-slide">
+              <img src="assets/img/gallery/gallery-11.jpg" alt="">
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/img/gallery/gallery-12.jpg" alt="">
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/img/gallery/gallery-13.jpg" alt="">
+            </div>
+
+            <div class="swiper-slide">
+              <img src="assets/img/gallery/gallery-14.jpg" alt="">
+            </div>
+          -->
+          </div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+          <div class="swiper-pagination"></div>
+        </div>
+
+        <div class="row justify-content-between gy-4 mt-4">
+
+          <div class="col-lg-8" data-aos="fade-up">
+            <div class="portfolio-description">
+              <h2>2D Rendering Software - Markov Decision Process</h2>
+              <p>
+                This project consists of a 2D rendering engine written in Java that can handle the following:
+              <ul>
+                <li>Rendering of 2D assets provided as tilesets</li>
+                <li>Animations</li>
+                <li>Collisions</li>
+                <li>Input Management</li>
+                <li>World Generation</li>
+              </ul>
+              </p>
+              <p>
+                The world is provided as a text-based configuration file (similar to an INI file). This file is parsed
+                by the engine that translates the text into a 2D world. Then a Markov Decision Process simulation is
+                created and an optimal path is found based on this world. The engine displays this path as the main
+                character moving inside of a dungeon. The goal of the Main Character is to reach the reward
+                (a PokeBall) while avoiding the ominous monsters that can appear in the dungeon. There are different
+                types of reward (a PokeBall, a MegaBall and a MasterBall) as well as monsters (Seviper, Darkrai,
+                Deoxys). The rewards and the monsters have different values and the Markov
+                Decision Process algorithm finds the -safest- route that is worth walking to get the highest value
+                reward. You can find <a href="https://en.wikipedia.org/wiki/Markov_decision_process">here</a> a detailed
+                description of the use case.
+              </p>
+              <h2>Expertise gained</h2>
+              <ul>
+                <li>Fundamentals of a Game Engine</li>
+                <li>How game engines handle tilesets for 2D graphics</li>
+                <li>How to handle 2D animations and Collisions</li>
+                <li>Object Oriented Programming to implement a complex piece of software with many components</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-lg-3" data-aos="fade-up" data-aos-delay="100">
+            <div class="portfolio-info">
+              <h3>Project information</h3>
+              <ul>
+                <li><strong>Category</strong>Game Development Fundamentals</li>
+                <li><strong>Project date</strong> March, 2020</li>
+                <!--<li><strong>Project URL</strong> <a href="#">www.example.com</a></li>
+                <li><a href="#" class="btn-visit align-self-start">Visit Website</a></li>-->
+              </ul>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section><!-- /Gallery Details Section -->
+
+  </main>
+
+  <footer id="footer" class="footer">
+
+    <div class="container">
+      <div class="copyright text-center ">
+        <p>© <span>Copyright</span> <strong class="px-1 sitename">PhotoFolio</strong> <span>All Rights Reserved</span>
+        </p>
+      </div>
+      <div class="social-links d-flex justify-content-center">
+        <a href=""><i class="bi bi-twitter-x"></i></a>
+      </div>
+      <div class="credits">
+        <!-- All the links in the footer should remain intact. -->
+        <!-- You can delete the links only if you've purchased the pro version. -->
+        <!-- Licensing information: https://bootstrapmade.com/license/ -->
+        <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
+        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+      </div>
+    </div>
+
+  </footer>
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader">
+    <div class="line"></div>
+  </div>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>
